@@ -1,0 +1,17 @@
+{
+  "name": "fluxql",
+  "version": "0.0.1",
+  "description": "A new query language",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^0.30.0"
+  }
+}
