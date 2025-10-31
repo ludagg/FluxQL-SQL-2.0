@@ -1,0 +1,1 @@
+users.filter(country == "FR" && age > 18).join(orders).groupBy(name).sum(orders.total).orderBy(-sum).limit(10)
