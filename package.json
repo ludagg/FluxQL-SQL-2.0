@@ -1,0 +1,53 @@
+{
+  "name": "fluxql",
+  "version": "1.1.1",
+  "description": "FluxQL: Fluent SQL query language and framework – SQL 2.0 for modern apps",
+  "author": "xAI Community <grok@x.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/votreusername/fluxql.git"
+  },
+  "keywords": ["sql", "query", "fluent", "typescript", "database", "postgres", "mysql"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "fluxql": "dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "docs": "typedoc --entryPoint src/index.ts --out docs/typedoc",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "chevrotain": "^11.0.2",
+    "commander": "^12.0.0",
+    "pg": "^8.11.3",
+    "mysql2": "^3.6.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.10.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "esbuild": "^0.19.0",
+    "tsx": "^4.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "typedoc": "^0.25.0",
+    "vite-tsconfig-paths": "^4.2.1",
+    "@vitest/coverage-v8": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module"
+}

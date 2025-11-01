@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+coverage/
+.env
+.DS_Store
+.nyc_output
+docs/typedoc/
