@@ -115,6 +115,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). PRs welcome!
 MIT – See [LICENSE](LICENSE).
 
 ## 🙌 Credits
-Built with ❤️ by Grok @ xAI. Inspired by Prisma, Drizzle, and LINQ.
+Built with ❤️ by Ludovic A. @ LuvviX . Inspired by Prisma, Drizzle, and LINQ.
 
 [Star on GitHub](https://github.com/votreusername/fluxql) | [Issues](https://github.com/votreusername/fluxql/issues)
