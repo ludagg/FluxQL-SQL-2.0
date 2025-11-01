@@ -1,20 +1,33 @@
-import { CstParser, EmbeddedActionsParser } from 'chevrotain';
-import { allTokens, FluxQLLexer } from './lexer.js';
+import { CstParser, CstNode, IToken, ParserMethod } from 'chevrotain';
+import { allTokens } from './lexer.js';
 import * as tokens from './tokens.js';
-import { QueryNode, ExpressionNode } from './ast.js';
 
 class FluxQLParser extends CstParser {
+  public query!: ParserMethod<[], CstNode>;
+  public expression!: ParserMethod<[], CstNode>;
+  public methodCall!: ParserMethod<[], CstNode>;
+  public logicalOrExpr!: ParserMethod<[], CstNode>;
+  public logicalAndExpr!: ParserMethod<[], CstNode>;
+  public relationalExpr!: ParserMethod<[], CstNode>;
+  public relationalOperator!: ParserMethod<[], CstNode>;
+  public primary!: ParserMethod<[], CstNode>;
+
   constructor() {
     super(allTokens);
 
     const $ = this;
 
-    $.RULE('query', () => {
+    this.query = $.RULE('query', () => {
       $.CONSUME(tokens.Identifier);
       $.MANY(() => $.SUBRULE($.methodCall));
     });
 
-    $.RULE('methodCall', () => {
+    // New rule for parsing only an expression
+    this.expression = $.RULE('expression', () => {
+      $.SUBRULE($.logicalOrExpr);
+    });
+
+    this.methodCall = $.RULE('methodCall', () => {
       $.CONSUME(tokens.Dot);
       $.CONSUME(tokens.Identifier);
       $.CONSUME(tokens.LParen);
@@ -22,8 +35,7 @@ class FluxQLParser extends CstParser {
       $.CONSUME(tokens.RParen);
     });
 
-    // Hiérarchie des expressions (de la plus basse à la plus haute priorité)
-    $.RULE('logicalOrExpr', () => {
+    this.logicalOrExpr = $.RULE('logicalOrExpr', () => {
       $.SUBRULE($.logicalAndExpr);
       $.MANY(() => {
         $.CONSUME(tokens.Or);
@@ -31,7 +43,7 @@ class FluxQLParser extends CstParser {
       });
     });
 
-    $.RULE('logicalAndExpr', () => {
+    this.logicalAndExpr = $.RULE('logicalAndExpr', () => {
       $.SUBRULE($.relationalExpr);
       $.MANY(() => {
         $.CONSUME(tokens.And);
@@ -39,7 +51,7 @@ class FluxQLParser extends CstParser {
       });
     });
 
-    $.RULE('relationalExpr', () => {
+    this.relationalExpr = $.RULE('relationalExpr', () => {
       $.SUBRULE($.primary);
       $.OPTION(() => {
         $.SUBRULE($.relationalOperator);
@@ -47,29 +59,27 @@ class FluxQLParser extends CstParser {
       });
     });
 
-    $.RULE('relationalOperator', () => {
+    this.relationalOperator = $.RULE('relationalOperator', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokens.Equals) },
         { ALT: () => $.CONSUME(tokens.Greater) },
         { ALT: () => $.CONSUME(tokens.Less) },
-        { ALT: () => $.CONSUME(tokens.Not) } // Pour !
+        { ALT: () => $.CONSUME(tokens.Not) }
       ]);
     });
 
-    $.RULE('primary', () => {
+    this.primary = $.RULE('primary', () => {
       $.OR([
-        // Identifiant
         { ALT: () => $.CONSUME(tokens.Identifier) },
-        // Littéral string
         { ALT: () => $.CONSUME(tokens.StringLiteral) },
-        // Littéral nombre
         { ALT: () => $.CONSUME(tokens.NumberLiteral) },
-        // Parenthèses pour groupement
-        { ALT: () => {
-          $.CONSUME(tokens.LParen);
-          $.SUBRULE($.logicalOrExpr);
-          $.CONSUME(tokens.RParen);
-        } }
+        {
+          ALT: () => {
+            $.CONSUME(tokens.LParen);
+            $.SUBRULE($.logicalOrExpr);
+            $.CONSUME(tokens.RParen);
+          }
+        }
       ]);
     });
 

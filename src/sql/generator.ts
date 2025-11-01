@@ -2,7 +2,7 @@ import { QueryNode, Dialect, ExpressionNode } from '../parser/ast.js';
 
 const defaultDialect: Dialect = {
   quote: (id: string) => `"${id}"`,
-  param: (i: number) => `$${i}`, // 1-based indexing for params
+  param: (i: number) => `$${i}`,
   aggregate: (func: string, field: string) => `${func.toUpperCase()}(${field})`
 };
 
@@ -38,13 +38,10 @@ export class SQLGenerator {
       sql += ` WHERE ${this.toExpression(ast.filter)}`;
     }
 
-    // Group By clause
-    if (ast.groupBy && ast.groupBy.length > 0 && !(ast.aggregates && ast.aggregates.length > 0)) {
-       sql += ` GROUP BY ${ast.groupBy.map(g => this.dialect.quote(g)).join(', ')}`;
-    } else if (ast.aggregates && ast.aggregates.length > 0 && ast.groupBy && ast.groupBy.length > 0) {
-       sql += ` GROUP BY ${ast.groupBy.map(g => this.dialect.quote(g)).join(', ')}`;
+    // Group By clause (simplified)
+    if (ast.groupBy && ast.groupBy.length > 0) {
+      sql += ` GROUP BY ${ast.groupBy.map(g => this.dialect.quote(g)).join(', ')}`;
     }
-
 
     // Limit clause
     if (ast.limit) {
@@ -70,7 +67,6 @@ export class SQLGenerator {
         return `(${leftStr} ${operator} ${rightStr})`;
       }
       default:
-        // This should be unreachable if all expression types are handled.
         const exhaustiveCheck: never = expr;
         throw new Error(`Unhandled expression type: ${(exhaustiveCheck as any).type}`);
     }

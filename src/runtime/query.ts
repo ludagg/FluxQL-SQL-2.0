@@ -1,24 +1,16 @@
-import { parser } from '../parser/parser.js';
-import { visitor } from '../parser/visitor.js';
 import { SQLGenerator } from '../sql/generator.js';
 import * as dialects from '../sql/dialects/index.js';
 import { extendRegistry } from './extensions.js';
-import { inferJoinOn } from './utils.js';
-import { FluxQLLexer } from '../parser/lexer.js';
+import { parseExpression } from '../parser/index.js';
+import { QueryNode } from '../parser/ast.js';
 
 type DialectName = 'postgres' | 'mysql' | 'sqlite';
 
 export class FluxQLQuery {
-  private ast: any = {
+  private ast: QueryNode = {
     type: 'Query',
-    from: { type: 'Table', name: '' },
-    joins: [],
+    from: { type: 'Identifier', name: '' },
     filter: undefined,
-    groupBy: undefined,
-    aggregates: [],
-    orderBy: [],
-    limit: undefined,
-    select: undefined,
     params: []
   };
 
@@ -27,37 +19,10 @@ export class FluxQLQuery {
   }
 
   filter(expr: string): this {
-    const lexResult = FluxQLLexer.tokenize(`${this.ast.from.name}.filter(${expr})`);
-    parser.input = lexResult.tokens;
-    const cst = parser.query();
-    if (parser.errors.length > 0) {
-      throw new Error('Parsing errors detected: ' + parser.errors[0].message);
-    }
-    const ast = visitor.visit(cst);
-    this.ast.filter = ast.filter;
-    this.ast.params = ast.params;
-    return this;
-  }
-
-  join(table: string): this {
-    const joinOn = { type: 'Expression', left: this.ast.from.name + '.id', operator: '==', right: table + '.' + this.ast.from.name + '_id' };
-    this.ast.joins.push({ type: 'Join', table: { type: 'Table', name: table }, on: joinOn });
-    return this;
-  }
-
-  groupBy(field: string): this {
-    this.ast.groupBy = [field];
-    return this;
-  }
-
-  sum(field: string): this {
-    this.ast.aggregates.push({ type: 'Aggregate', func: 'sum', field, alias: 'sum' });
-    return this;
-  }
-
-  orderBy(field: string): this {
-    const dir = field.startsWith('-') ? 'DESC' : 'ASC';
-    this.ast.orderBy.push({ type: 'Order', field: field.replace(/^-/, ''), direction: dir });
+    const { expression, params } = parseExpression(expr);
+    this.ast.filter = expression;
+    // Append new params, ensuring not to overwrite existing ones
+    this.ast.params.push(...params);
     return this;
   }
 
@@ -66,8 +31,8 @@ export class FluxQLQuery {
     return this;
   }
 
-  select(fields: string): this {
-    this.ast.select = { type: 'Select', fields: fields.split(',').map(f => f.trim()) };
+  select(fields: string | string[]): this {
+    this.ast.select = Array.isArray(fields) ? fields : fields.split(',').map(f => f.trim());
     return this;
   }
 
@@ -96,7 +61,7 @@ export class FluxQLQuery {
     } else if (dialect === 'sqlite') {
       const sqlite3 = await import('sqlite3');
       return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(':memory:'); // Or file path
+        const db = new sqlite3.Database(':memory:');
         db.all(sql, params, (err, rows) => {
           if (err) reject(err);
           else resolve(rows);
@@ -108,7 +73,6 @@ export class FluxQLQuery {
   }
 }
 
-// Proxy for custom extensions
 const handler = {
   get(target: any, prop: string) {
     if (prop in target) return target[prop];

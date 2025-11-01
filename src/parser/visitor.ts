@@ -35,6 +35,11 @@ class FluxQLVisitor extends BaseFluxQLVisitor {
     };
   }
 
+  // Visitor for the new expression rule
+  expression(ctx: any): ExpressionNode {
+    return this.visit(ctx.logicalOrExpr);
+  }
+
   methodCall(ctx: any) {
     const methodName = ctx.Identifier[0].image;
 

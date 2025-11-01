@@ -1,13 +1,10 @@
 import { FluxQLLexer } from './lexer';
 import { parser } from './parser';
 import { visitor } from './visitor';
-import { QueryNode } from './ast';
+import { QueryNode, ExpressionNode } from './ast';
 
 /**
- * Parses a FluxQL query string into an Abstract Syntax Tree (AST).
- *
- * @param query The FluxQL query string to parse.
- * @returns The AST representation of the query.
+ * Parses a full FluxQL query string into a QueryNode AST.
  */
 export function parse(query: string): QueryNode {
   const lexResult = FluxQLLexer.tokenize(query);
@@ -20,4 +17,23 @@ export function parse(query: string): QueryNode {
 
   const ast = visitor.visit(cst) as QueryNode;
   return ast;
+}
+
+/**
+ * Parses a FluxQL expression string into an ExpressionNode AST.
+ */
+export function parseExpression(expression: string): { expression: ExpressionNode, params: any[] } {
+  const lexResult = FluxQLLexer.tokenize(expression);
+  parser.input = lexResult.tokens;
+  const cst = parser.expression();
+
+  if (parser.errors.length > 0) {
+    throw new Error(`Parsing errors detected: ${parser.errors[0].message}`);
+  }
+
+  // Reset params before visiting, as visitor is stateful
+  visitor.params = [];
+  const expressionAst = visitor.visit(cst) as ExpressionNode;
+
+  return { expression: expressionAst, params: visitor.params };
 }
