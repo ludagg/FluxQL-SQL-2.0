@@ -117,4 +117,4 @@ MIT – See [LICENSE](LICENSE).
 ## 🙌 Credits
 Built with ❤️ by Ludovic A. @ LuvviX . Inspired by Prisma, Drizzle, and LINQ.
 
-[Star on GitHub](https://github.com/votreusername/fluxql) | [Issues](https://github.com/votreusername/fluxql/issues)
+[Star on GitHub](https://github.com/ludagg/FluxQL-SQL-2.0) | [Issues](https://github.com/ludagg/FluxQL-SQL-2.0/issues)
