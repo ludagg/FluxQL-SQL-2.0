@@ -18,11 +18,6 @@
 
 ## 🚀 Quick Start
 
-### Installation
-```bash
-npm install fluxql
-```
-
 ### Basic Usage (JS/TS)
 ```javascript
 import { fluxql } from 'fluxql';
