@@ -1,8 +1,6 @@
 # FluxQL 🚀 – The Fluent SQL of the Future
 
-[![npm version](https://badge.fury.io/js/fluxql.svg)](https://badge.fury.io/js/fluxql)
 [![Tests](https://github.com/votreusername/fluxql/actions/workflows/ci.yml/badge.svg)](https://github.com/votreusername/fluxql/actions)
-[![Coverage](https://codecov.io/gh/votreusername/fluxql/branch/main/graph/badge.svg)](https://codecov.io/gh/votreusername/fluxql)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
