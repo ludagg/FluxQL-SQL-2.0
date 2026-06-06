@@ -34,6 +34,6 @@ describe('SQL Generator', () => {
     };
     const gen = new SQLGenerator();
     const { sql } = gen.generate(ast);
-    expect(sql).toContain('SELECT SUM(amount) AS sum, "region" FROM "sales" GROUP BY "region";');
+    expect(sql).toContain('SELECT SUM("amount") AS "sum", "region" FROM "sales" GROUP BY "region";');
   });
 });

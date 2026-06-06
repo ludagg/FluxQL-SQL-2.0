@@ -1,7 +1,7 @@
-import { FluxQLLexer } from './lexer';
-import { parser } from './parser';
-import { visitor } from './visitor';
-import { QueryNode, ExpressionNode } from './ast';
+import { FluxQLLexer } from './lexer.js';
+import { parser } from './parser.js';
+import { visitor } from './visitor.js';
+import { QueryNode, ExpressionNode } from './ast.js';
 
 /**
  * Parses a full FluxQL query string into a QueryNode AST.
