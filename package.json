@@ -2,11 +2,11 @@
   "name": "fluxql",
   "version": "1.1.1",
   "description": "FluxQL: Fluent SQL query language and framework – SQL 2.0 for modern apps",
-  "author": "xAI Community <grok@x.ai>",
+  "author": "Ludovic A. (LuvviX)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/votreusername/fluxql.git"
+    "url": "https://github.com/ludagg/FluxQL-SQL-2.0.git"
   },
   "keywords": ["sql", "query", "fluent", "typescript", "database", "postgres", "mysql"],
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
     "fluxql": "dist/cli/index.js"
   },
   "scripts": {
-    "build": "tsc && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm",
+    "build": "tsc && esbuild src/index.ts --bundle --packages=external --platform=node --outfile=dist/index.js --format=esm",
     "dev": "tsx watch src/index.ts",
     "test": "vitest run --coverage",
     "test:watch": "vitest",

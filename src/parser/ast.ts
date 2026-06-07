@@ -5,6 +5,7 @@ export type AstNode = {
 export type ExpressionNode =
   | Identifier
   | Literal
+  | UnaryExpression
   | BinaryExpression
   | LogicalExpression;
 
@@ -16,6 +17,12 @@ export type Identifier = AstNode & {
 export type Literal = AstNode & {
   type: 'Literal';
   value: string | number;
+};
+
+export type UnaryExpression = AstNode & {
+  type: 'UnaryExpression';
+  operator: string;
+  argument: ExpressionNode;
 };
 
 export type BinaryExpression = AstNode & {
@@ -37,6 +44,21 @@ export type AggregateNode = AstNode & {
   func: string;
   field: string;
   alias?: string;
+  /** Optional window frame; when set, renders `FUNC(field) OVER (<over>)`. */
+  over?: string;
+};
+
+export type JoinNode = AstNode & {
+  type: 'Join';
+  table: string;
+  /** Optional raw ON clause. When omitted it is inferred from table names. */
+  on?: string;
+};
+
+export type OrderByNode = AstNode & {
+  type: 'OrderBy';
+  field: string;
+  direction: 'ASC' | 'DESC';
 };
 
 export type QueryNode = AstNode & {
@@ -44,8 +66,10 @@ export type QueryNode = AstNode & {
   from: Identifier;
   select?: string[];
   filter?: ExpressionNode;
+  joins?: JoinNode[];
   aggregates?: AggregateNode[];
   groupBy?: string[];
+  orderBy?: OrderByNode[];
   limit?: number;
   params: any[];
 };
