@@ -44,6 +44,8 @@ export type AggregateNode = AstNode & {
   func: string;
   field: string;
   alias?: string;
+  /** Optional window frame; when set, renders `FUNC(field) OVER (<over>)`. */
+  over?: string;
 };
 
 export type JoinNode = AstNode & {

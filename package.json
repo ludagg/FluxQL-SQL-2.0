@@ -2,7 +2,7 @@
   "name": "fluxql",
   "version": "1.1.1",
   "description": "FluxQL: Fluent SQL query language and framework – SQL 2.0 for modern apps",
-  "author": "xAI Community <grok@x.ai>",
+  "author": "Ludovic A. (LuvviX)",
   "license": "MIT",
   "repository": {
     "type": "git",

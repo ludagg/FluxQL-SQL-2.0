@@ -58,3 +58,24 @@ describe('Fluent builder', () => {
     expect(sql).toContain('COUNT(*) AS "count"');
   });
 });
+
+describe('Extensions', () => {
+  it('renders an aggregate with an OVER window frame and stays chainable', async () => {
+    const { extend } = await import('../src/index.js');
+    extend('trend', (ast: any, [period, field]: any[]) => {
+      (ast.aggregates ??= []).push({
+        type: 'Aggregate',
+        func: 'avg',
+        field,
+        alias: 'trend',
+        over: `ORDER BY id ROWS ${period} PRECEDING`
+      });
+    });
+
+    const { sql } = (fluxql('sales') as any).trend(7, 'amount').filter('amount > 0').toSQL('postgres');
+    expect(sql).toBe(
+      'SELECT AVG("amount") OVER (ORDER BY id ROWS 7 PRECEDING) AS "trend" ' +
+        'FROM "sales" WHERE ("amount" > $1);'
+    );
+  });
+});

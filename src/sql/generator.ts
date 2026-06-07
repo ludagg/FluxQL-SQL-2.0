@@ -39,7 +39,9 @@ export class SQLGenerator {
         ...ast.aggregates.map(a => {
           const field = a.field === '*' ? '*' : this.quoteId(a.field);
           const alias = a.alias || a.func;
-          return `${this.dialect.aggregate(a.func, field)} AS ${this.dialect.quote(alias)}`;
+          const call = this.dialect.aggregate(a.func, field);
+          const expr = a.over ? `${call} OVER (${a.over})` : call;
+          return `${expr} AS ${this.dialect.quote(alias)}`;
         })
       );
       // When grouping without an explicit projection, surface the grouped columns.

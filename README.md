@@ -86,15 +86,22 @@ See [docs/api.md](docs/api.md) for full docs.
 
 ## 🔧 Extensions
 ```javascript
-import { extend } from 'fluxql';
+import { fluxql, extend } from 'fluxql';
 
+// A moving-average window function over the last N rows.
 extend('trend', (ast, [period, field]) => {
-  // Add window function
-  ast.aggregates.push({ type: 'Window', func: 'AVG', field, over: `ROWS ${period} PRECEDING` });
+  (ast.aggregates ??= []).push({
+    type: 'Aggregate',
+    func: 'avg',
+    field,
+    alias: 'trend',
+    over: `ORDER BY id ROWS ${period} PRECEDING`,
+  });
 });
 
-// Usage
-fluxql('sales').trend(7, 'amount');
+const q = fluxql('sales').trend(7, 'amount');
+console.log(q.toSQL('postgres').sql);
+// SELECT AVG("amount") OVER (ORDER BY id ROWS 7 PRECEDING) AS "trend" FROM "sales";
 ```
 See [docs/extensions.md](docs/extensions.md).
 
